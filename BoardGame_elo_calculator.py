@@ -363,18 +363,9 @@ elif choice == "League Setup":
 
             if new_player:
 
-                try:
-
-                    supabase.table("players").insert({
-                        "name": new_player.strip()
-                    }).execute()
-
-                    st.success("Player added!")
-
-                except Exception as e:
-
-                    st.error(str(e))
-                    st.stop()
+                supabase.table("players").insert({
+                    "name": new_player.strip()
+                }).execute()
 
                 st.success("Player added!")
 
