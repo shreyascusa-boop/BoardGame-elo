@@ -68,10 +68,34 @@ except Exception as e:
 # ---------------------------
 
 def get_players():
-    return [row[0] for row in c.execute("SELECT name FROM players").fetchall()]
+
+    result = (
+        supabase
+        .table("players")
+        .select("name")
+        .order("name")
+        .execute()
+    )
+
+    return [
+        row["name"]
+        for row in result.data
+    ]
 
 def get_games():
-    return [row[0] for row in c.execute("SELECT name FROM games").fetchall()]
+
+    result = (
+        supabase
+        .table("games")
+        .select("name")
+        .order("name")
+        .execute()
+    )
+
+    return [
+        row["name"]
+        for row in result.data
+    ]
 
 def fetch_match_data():
     query = """
