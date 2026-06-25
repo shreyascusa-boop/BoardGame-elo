@@ -197,28 +197,29 @@ def recalc_all_elo():
         )
 
         for player in ranks:
-            result_id = match[match['player'] == player]['result_id'].iloc[0]           
-            c.execute("""
-                UPDATE match_results SET
-                global_elo_before=?,
-                global_elo_after=?,
-                game_elo_before=?,
-                game_elo_after=?
-                WHERE result_id=?
-            """, (
-                float(g_before[player]),
-                float(global_ratings[player]),
-                float(game_before[player]),
-                float(game_ratings[game_name][player]),
-                int(result_id)
-            ))
+
+            result_id = int(
+                match[
+                    match['player'] == player
+                ]['result_id'].iloc[0]
+            )
+
+            supabase.table("match_results")\
+                .update({
+                    "global_elo_before": float(g_before[player]),
+                    "global_elo_after": float(global_ratings[player]),
+                    "game_elo_before": float(game_before[player]),
+                    "game_elo_after": float(
+                        game_ratings[game_name][player]
+                    )
+                })\
+                .eq("result_id", result_id)\
+                .execute()
 
         for p in ranks:
             games_played[p] += 1
             if games_played[p] >= PROVISIONAL_GAMES:
                 provisional[p] = False
-
-    conn.commit()
 
 if st.button("Force Recalculate"):
     recalc_all_elo()
