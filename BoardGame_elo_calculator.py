@@ -497,32 +497,58 @@ elif choice == "Add Match":
     date_played = st.date_input("Date", datetime.date.today())
 
     if st.button("Submit Match"):
-        game_id = c.execute(
-            "SELECT game_id FROM games WHERE name=?",
-            (game_name,)
-        ).fetchone()[0]
 
-        c.execute(
-            "INSERT INTO matches (game_id, date_played) VALUES (?,?)",
-            (game_id, date_played)
+        game_result = (
+            supabase
+            .table("games")
+            .select("game_id")
+            .eq("name", game_name)
+            .execute()
         )
-        match_id = c.lastrowid
+
+        game_id = game_result.data[0]["game_id"]
+
+        match_insert = (
+            supabase
+            .table("matches")
+            .insert({
+                "game_id": game_id,
+                "date_played": str(date_played)
+            })
+            .execute()
+        )
+
+        match_id = match_insert.data[0]["match_id"]
 
         for p in selected_players:
-            player_id = c.execute(
-                "SELECT player_id FROM players WHERE name=?",
-                (p,)
-            ).fetchone()[0]
 
-            c.execute("""
-                INSERT INTO match_results
-                (match_id, player_id, rank,score)
-                VALUES (?,?,?,?)
-            """, (match_id, player_id, ranks[p], scores[p]))
+            player_result = (
+                supabase
+                .table("players")
+                .select("player_id")
+                .eq("name", p)
+                .execute()
+            )
 
-        conn.commit()
+            player_id = player_result.data[0]["player_id"]
+
+            (
+                supabase
+                .table("match_results")
+                .insert({
+                    "match_id": match_id,
+                    "player_id": player_id,
+                    "rank": int(ranks[p]),
+                    "score": float(scores[p])
+                })
+                .execute()
+            )
+
         recalc_all_elo()
-        st.success("Match Added & Elo Recalculated!")
+ 
+        st.success(
+            "Match Added & Elo Recalculated!"
+        )
 
 # =========================================================
 # =============== EDIT MATCH/MATCH HISTORY ================
