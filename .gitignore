@@ -1,2 +1,3 @@
 __pycache__/
 *.pyc
+migrate_sqlite_to_supabase.py

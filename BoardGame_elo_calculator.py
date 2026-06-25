@@ -5,7 +5,7 @@ import datetime
 import numpy as np
 import plotly.graph_objects as go
 
-from supavase import create_client
+from supabase import create_client
 
 from elo_engine import (
     pairwise_elo_update,
