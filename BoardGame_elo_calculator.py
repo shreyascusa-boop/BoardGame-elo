@@ -4,7 +4,16 @@ import sqlite3
 import datetime
 import numpy as np
 import plotly.graph_objects as go
-from elo_engine import pairwise_elo_update, START_ELO, K_GLOBAL, K_GAME, PROVISIONAL_GAMES
+
+from supavase import create_client
+
+from elo_engine import (
+    pairwise_elo_update,
+    START_ELO,
+    K_GLOBAL,
+    K_GAME,
+    PROVISIONAL_GAMES
+)
 
 # ---------------------------
 # --- Streamlit Setup ------
@@ -23,8 +32,36 @@ body { background-color: #121212; color: white; }
 conn = sqlite3.connect("league.db", check_same_thread=False)
 c = conn.cursor()
 
-import os
-st.write("APP DB:", os.path.abspath("league.db"))
+
+# ---------------------------
+# --- Supabase -------------
+# ---------------------------
+
+SUPABASE_URL = "https://rwhelqwagjkdllbzgtig.supabase.co"
+
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+
+supabase = create_client(
+    SUPABASE_URL,
+    SUPABASE_KEY
+)
+
+try:
+
+    test = (
+        supabase
+        .table("players")
+        .select("*")
+        .limit(1)
+        .execute()
+    )
+
+    st.sidebar.success("Supabase Connected")
+
+except Exception as e:
+
+    st.sidebar.error(f"Supabase Error: {e}")
+
 
 # ---------------------------
 # --- Helper Functions -----
