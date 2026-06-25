@@ -37,7 +37,7 @@ c = conn.cursor()
 # --- Supabase -------------
 # ---------------------------
 
-SUPABASE_URL = "https://rwhelqwagjkdllbzgtig.supabase.co"
+SUPABASE_URL = "https://bolkvlryulxbdixkreil.supabase.co"
 
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 
