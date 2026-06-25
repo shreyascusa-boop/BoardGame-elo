@@ -98,16 +98,67 @@ def get_games():
     ]
 
 def fetch_match_data():
-    query = """
-    SELECT mr.result_id, m.match_id, g.name as game, p.name as player,
-           mr.rank, m.date_played, mr.global_elo_after
-    FROM match_results mr
-    JOIN matches m ON mr.match_id = m.match_id
-    JOIN players p ON mr.player_id = p.player_id
-    JOIN games g ON m.game_id = g.game_id
-    ORDER BY m.date_played
-    """
-    return pd.read_sql(query, conn)
+
+    players = (
+        supabase
+        .table("players")
+        .select("*")
+        .execute()
+        .data
+    )
+
+    games = (
+        supabase
+        .table("games")
+        .select("*")
+        .execute()
+        .data
+    )
+
+    matches = (
+        supabase
+        .table("matches")
+        .select("*")
+        .execute()
+        .data
+    )
+
+    results = (
+        supabase
+        .table("match_results")
+        .select("*")
+        .execute()
+        .data
+    )
+
+    players_df = pd.DataFrame(players)
+    games_df = pd.DataFrame(games)
+    matches_df = pd.DataFrame(matches)
+    results_df = pd.DataFrame(results)
+
+    df = (
+        results_df
+        .merge(matches_df, on="match_id")
+        .merge(players_df, on="player_id")
+        .merge(games_df, on="game_id")
+    )
+
+    df = df.rename(columns={
+        "name_x": "player",
+        "name_y": "game"
+    })
+
+    return df[
+        [
+            "result_id",
+            "match_id",
+            "game",
+            "player",
+            "rank",
+            "date_played",
+            "global_elo_after"
+        ]
+    ].sort_values("date_played")
 
 # ---------------------------
 # --- Recalculate Elo -------
