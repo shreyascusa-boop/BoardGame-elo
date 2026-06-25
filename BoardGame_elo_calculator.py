@@ -360,10 +360,16 @@ elif choice == "League Setup":
         st.subheader("Add Player")
         new_player = st.text_input("Player Name")
         if st.button("Add Player"):
+
             if new_player:
-                c.execute("INSERT OR IGNORE INTO players (name) VALUES (?)", (new_player,))
-                conn.commit()
+
+                supabase.table("players").insert({
+                    "name": new_player.strip()
+                }).execute()
+
                 st.success("Player added!")
+
+                st.rerun()
 
         st.subheader("Current Players")
         st.write(get_players())
@@ -389,17 +395,13 @@ elif choice == "League Setup":
 
             if st.button("Update Player Name"):
 
-                c.execute("""
-                    UPDATE players
-                    SET name = ?
-                    WHERE name = ?
-                """, (
-                    new_player_name.strip(),
-                    selected_player
-                ))      
-
-                conn.commit()
-
+                supabase.table("players")\
+                    .update({
+                        "name": new_player_name.strip()
+                    })\
+                    .eq("name", selected_player)\
+                    .execute()
+ 
                 st.success(
                     f"Updated {selected_player} → {new_player_name}"
                 )
@@ -411,10 +413,16 @@ elif choice == "League Setup":
         st.subheader("Add Game")
         new_game = st.text_input("Game Name")
         if st.button("Add Game"):
+
             if new_game:
-                c.execute("INSERT OR IGNORE INTO games (name) VALUES (?)", (new_game,))
-                conn.commit()
+
+                supabase.table("games").insert({
+                    "name": new_game.strip()
+                }).execute()
+
                 st.success("Game added!")
+
+                st.rerun()
 
         st.subheader("Current Games")
         st.write(get_games())
@@ -440,17 +448,13 @@ elif choice == "League Setup":
 
             if st.button("Update Game Name"):
 
-                c.execute("""
-                    UPDATE games
-                    SET name = ?
-                    WHERE name = ?
-                """, (
-                    new_game_name.strip(),
-                    selected_game
-                ))
-
-                conn.commit()
-
+                supabase.table("games")\
+                    .update({
+                        "name": new_game_name.strip()
+                    })\
+                    .eq("name", selected_game)\
+                    .execute()
+ 
                 st.success(
                     f"Updated {selected_game} → {new_game_name}"
                 )
