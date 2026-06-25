@@ -374,6 +374,7 @@ elif choice == "League Setup":
                 except Exception as e:
 
                     st.error(str(e))
+                    st.stop()
 
                 st.success("Player added!")
 
