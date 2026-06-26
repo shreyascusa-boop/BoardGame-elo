@@ -526,6 +526,8 @@ elif choice == "Add Match":
 
         for p in selected_players:
 
+            st.write("Processing:", p)
+
             player_result = (
                 supabase
                 .table("players")
@@ -534,9 +536,13 @@ elif choice == "Add Match":
                 .execute()
             )
 
+            st.write(player_result.data)
+
             player_id = player_result.data[0]["player_id"]
 
-            (
+            st.write("Player ID:", player_id)
+
+            results = (
                 supabase
                 .table("match_results")
                 .insert({
@@ -548,11 +554,25 @@ elif choice == "Add Match":
                 .execute()
             )
 
-        recalc_all_elo()
+            st.write(results)
+
+        try:
+
+            st.write("Before recalc")
+
+            recalc_all_elo()
+
+            st.write("After recalc")
+
+            st.success(
+                "Match Added & Elo Recalculated!"
+            )
+
+        except Exception as e:
+
+            st.exception(e)
  
-        st.success(
-            "Match Added & Elo Recalculated!"
-        )
+
 
 # =========================================================
 # =============== EDIT MATCH/MATCH HISTORY ================
