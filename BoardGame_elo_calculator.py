@@ -148,6 +148,20 @@ def fetch_match_data():
         "name_y": "game"
     })
 
+    st.write("Rows in fetch_match_data:", len(df))
+
+    st.write(
+        df.tail(10)[
+            [
+                "match_id",
+                "player",
+                "game",
+                "rank",
+                "date_played"
+            ]
+        ]
+    )
+
     return df[
         [
             "result_id",
