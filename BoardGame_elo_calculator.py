@@ -97,6 +97,14 @@ def get_games():
         for row in result.data
     ]
 
+st.write("players_df", len(players_df))
+st.write("games_df", len(games_df))
+st.write("matches_df", len(matches_df))
+st.write("results_df", len(results_df))
+
+st.write("matches max id:", matches_df["match_id"].max())
+st.write("results max match_id:", results_df["match_id"].max())
+
 def fetch_match_data():
 
     players = (
@@ -135,6 +143,9 @@ def fetch_match_data():
     games_df = pd.DataFrame(games)
     matches_df = pd.DataFrame(matches)
     results_df = pd.DataFrame(results)
+
+    st.write(matches_df[matches_df["match_id"] == 32])
+    st.write(results_df[results_df["match_id"] == 32])
 
     df = (
         results_df
